@@ -1,0 +1,6 @@
+# Binary
+client
+server
+
+# vim swap file
+*.swp

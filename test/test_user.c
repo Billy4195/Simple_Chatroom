@@ -80,7 +80,7 @@ user_t* test_RemoveUserFromList(){
     assert(rootNode->next == NULL);
 }
 
-void test_CheckUserValid(void){
+void test_CheckUserNameValid(void){
     user_t *rootNode=NULL;
     user_t *user1 = NewUser(3,"192.168.0.1",3000,"anonymous");
     user_t *user2 = NewUser(4,"192.168.0.2",3000,"user2");
@@ -90,11 +90,11 @@ void test_CheckUserValid(void){
     AddUserToList(rootNode,user2);
     AddUserToList(rootNode,user3);
 
-    assert(CheckUserValid(rootNode,"user4") == 1);
-    assert(CheckUserValid(rootNode,"x") == 0);
-    assert(CheckUserValid(rootNode,"1234567890123") == 0);
-    assert(CheckUserValid(rootNode,"anonymous") == 0);
-    assert(CheckUserValid(rootNode,"user2") == 0);
+    assert(CheckUserNameValid(rootNode,"user4") == 1);
+    assert(CheckUserNameValid(rootNode,"x") == 0);
+    assert(CheckUserNameValid(rootNode,"1234567890123") == 0);
+    assert(CheckUserNameValid(rootNode,"anonymous") == 0);
+    assert(CheckUserNameValid(rootNode,"user2") == 0);
 }
 
 int main(){
@@ -102,6 +102,6 @@ int main(){
     test_NewUser();
     test_AddUserToList();
     test_RemoveUserFromList();
-    test_CheckUserValid();
+    test_CheckUserNameValid();
     return 0;
 }

@@ -70,7 +70,7 @@ user_t* RemoveUserFromList(user_t *root,user_t *user){
     return root;
 }
 
-int CheckUserValid(user_t *root,char *name){
+int CheckUserNameValid(user_t *root,char *name){
     user_t *cur=root;
     int len = strlen(name);
     if(len < 2 || len > 12){

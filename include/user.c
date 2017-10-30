@@ -32,3 +32,21 @@ void AddUserToList(user_t *root,user_t *newUser){
     }
     cur->next = newUser;
 }
+
+int CheckUserValid(user_t *root,char *name){
+    user_t *cur=root;
+    int len = strlen(name);
+    if(len < 2 || len > 12){
+        return 0;
+    }
+    if(strcmp(name,"anonymous") == 0){
+        return 0;
+    }
+    while(cur != NULL){
+        if(strcmp(cur->name,name) == 0){
+            return 0;
+        }
+        cur = cur->next;
+    }
+    return 1;
+}

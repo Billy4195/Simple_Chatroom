@@ -11,5 +11,6 @@ typedef struct User{
 
 user_t* NewUser(int fd,char *addr,unsigned short port,char *name);
 void AddUserToList(user_t *root,user_t *newUser);
+int CheckUserValid(user_t *root,char *name);
 
 #endif

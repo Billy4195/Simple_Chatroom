@@ -35,8 +35,25 @@ void test_AddUserToList(void){
     checkUserInfo(cur,5,"192.168.0.3",3000,"anonymous");
 }
 
+void test_CheckUserValid(void){
+    user_t *rootNode=NULL;
+    user_t *user1 = NewUser(3,"192.168.0.1",3000,"anonymous");
+    user_t *user2 = NewUser(4,"192.168.0.2",3000,"user2");
+    user_t *user3 = NewUser(5,"192.168.0.3",3000,"user3");
+
+    rootNode = user1;
+    AddUserToList(rootNode,user2);
+    AddUserToList(rootNode,user3);
+
+    assert(CheckUserValid(rootNode,"user4") == 1);
+    assert(CheckUserValid(rootNode,"x") == 0);
+    assert(CheckUserValid(rootNode,"1234567890123") == 0);
+    assert(CheckUserValid(rootNode,"anonymous") == 0);
+}
+
 int main(){
     test_NewUser();
     test_AddUserToList();
+    test_CheckUserValid();
     return 0;
 }

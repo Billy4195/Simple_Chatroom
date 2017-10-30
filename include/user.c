@@ -27,6 +27,9 @@ ret:
 
 void AddUserToList(user_t *root,user_t *newUser){
     user_t *cur = root;
+    if(root == NULL){
+        return;
+    }
     while(cur->next != NULL){
         cur = cur->next;
     }

@@ -35,15 +35,16 @@ ret:
     return user;
 }
 
-void AddUserToList(user_t *root,user_t *newUser){
+user_t* AddUserToList(user_t *root,user_t *newUser){
     user_t *cur = root;
     if(root == NULL){
-        return;
+        return newUser;
     }
     while(cur->next != NULL){
         cur = cur->next;
     }
     cur->next = newUser;
+    return root;
 }
 
 user_t* RemoveUserFromList(user_t *root,user_t *user){

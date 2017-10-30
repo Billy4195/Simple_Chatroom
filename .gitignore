@@ -1,6 +1,11 @@
 # Binary
 client
 server
+test/test_user
 
 # vim swap file
 *.swp
+
+#object file
+*.o
+

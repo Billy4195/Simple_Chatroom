@@ -49,6 +49,7 @@ void test_CheckUserValid(void){
     assert(CheckUserValid(rootNode,"x") == 0);
     assert(CheckUserValid(rootNode,"1234567890123") == 0);
     assert(CheckUserValid(rootNode,"anonymous") == 0);
+    assert(CheckUserValid(rootNode,"user2") == 0);
 }
 
 int main(){

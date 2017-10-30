@@ -87,3 +87,15 @@ int CheckUserNameValid(user_t *root,char *name){
     }
     return 1;
 }
+
+int ChangeUserName(user_t *root,user_t *user,char *newName){
+    if(strcmp(user->name,newName) == 0){
+        return 1;
+    }
+    if(CheckUserNameValid(root,newName)){
+        strcpy(user->name,newName);
+        return 1;
+    }else{
+        return 0;
+    }
+}

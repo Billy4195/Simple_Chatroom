@@ -97,6 +97,30 @@ void test_CheckUserNameValid(void){
     assert(CheckUserNameValid(rootNode,"user2") == 0);
 }
 
+void test_ChangeUserName(void){
+    int i;
+    user_t *rootNode=NULL,*cur=NULL;
+    user_t *userArr[4];
+    userArr[0] = NewUser(3,"192.168.0.1",3000,"anonymous");
+    userArr[1] = NewUser(4,"192.168.0.2",3000,"anonymous");
+    userArr[2] = NewUser(5,"192.168.0.3",3000,"anonymous");
+    userArr[3] = NewUser(6,"192.168.0.3",3000,"user4");
+
+    rootNode = userArr[0];
+    for(i=1;i<3;i++){
+        AddUserToList(rootNode,userArr[i]);
+    }
+
+    assert(ChangeUserName(rootNode,userArr[0],"user1") == 1);
+    assert(ChangeUserName(rootNode,userArr[0],"user1") == 1);
+    assert(ChangeUserName(rootNode,userArr[1],"anonymous") == 0);
+    assert(ChangeUserName(rootNode,userArr[1],"user1") == 0);
+    assert(ChangeUserName(rootNode,userArr[1],"x") == 0);
+    assert(ChangeUserName(rootNode,userArr[1],"1234567890123") == 0);
+
+    assert(strcmp(rootNode->name,"user1") == 0);
+}
+
 int main(){
     test_UserEqual();
     test_NewUser();

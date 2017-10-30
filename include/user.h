@@ -14,5 +14,6 @@ user_t* NewUser(int fd,char *addr,unsigned short port,char *name);
 void AddUserToList(user_t *root,user_t *newUser);
 user_t* RemoveUserFromList(user_t *root,user_t *user);
 int CheckUserNameValid(user_t *root,char *name);
+int ChangeUserName(user_t *root,user_t *user,char *newName);
 
 #endif

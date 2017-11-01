@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+
+#define MAX(x,y) ((x)>(y))?(x):(y)
 
 int main(int argc,char **argv){
     int clientFd;
@@ -12,6 +15,11 @@ int main(int argc,char **argv){
     char server_addr[16];
     unsigned short server_port;
     char recBuf[4096];
+    int recCount;
+    fd_set rfds;
+    unsigned short maxfdp;
+
+    FD_ZERO(&rfds);
 
     if(argc == 3){
         strcpy(server_addr,argv[1]);
@@ -31,10 +39,27 @@ int main(int argc,char **argv){
     clientAddr.sin_port = htons(server_port);
 
     connect(clientFd,(struct sockaddr*)&clientAddr,sizeof(clientAddr));
-
-    memset(recBuf,0,sizeof(recBuf));
-    recv(clientFd,recBuf,sizeof(recBuf),0);
-    printf("%s\n",recBuf);
+    while(1){
+        memset(recBuf,0,sizeof(recBuf));
+        FD_SET(0,&rfds);
+        FD_SET(clientFd,&rfds);
+        maxfdp = MAX(0,clientFd) + 1;
+        select(maxfdp,&rfds,NULL,NULL,NULL);
+        if(FD_ISSET(0,&rfds)){
+            recCount = read(0,recBuf,sizeof(recBuf));
+            printf("Received from stdin: ###%s###\n",recBuf);
+            if(strcmp(recBuf,"exit\n") == 0){
+                break;
+            }else{
+                write(clientFd,recBuf,sizeof(recBuf));
+            }
+        }else if(FD_ISSET(clientFd,&rfds)){
+            recCount = read(clientFd,recBuf,sizeof(recBuf));
+            if(recCount > 0){
+                printf("%s",recBuf);
+            }
+        }
+    }
 
     close(clientFd);
     return 0;

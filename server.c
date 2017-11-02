@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -21,6 +22,10 @@ int* set_fdset(user_t *curNode,fd_set *rfds,int *maxfdp){
         *maxfdp = MAX(*maxfdp,curNode->fd);
         curNode = curNode->next;
     }
+}
+
+void clearBuf(char *buffer,int len){
+    memset(buffer,0,len);
 }
 
 int main(){
@@ -60,6 +65,7 @@ int main(){
         maxfdp = MAX(maxfdp,listenFd);
         set_fdset(root,&rfds,&maxfdp);
         select(maxfdp+1,&rfds,NULL,NULL,NULL);
+        clearBuf(recBuf,4096);
         if(FD_ISSET(listenFd,&rfds)){
             socklen_t clientAddrLen=sizeof(clientAddr);
             if( (connfd = accept(listenFd,(struct sockaddr*)NULL,NULL)) != -1 ){
@@ -97,8 +103,34 @@ int main(){
                         }
                         cur = cur->next;
                     }else{
+                        char *spacePtr,*cmd,*param;
                         recBuf[strlen(recBuf)-1] = '\0';
                         printf("%s\n",recBuf);
+                        if(strcmp(recBuf,"who") == 0){
+                            user_t *curNode_temp=root;
+                            while(curNode_temp != NULL){
+                                sprintf(recBuf,"[Server] %s %s/%u\n",curNode_temp->name,curNode_temp->addr,curNode_temp->port);
+                                if(UserEqual(curNode_temp,cur)){
+                                    recBuf[strlen(recBuf)-1] = '\0';
+                                    strcat(recBuf," ->me\n");
+                                }
+                                write(cur->fd,recBuf,strlen(recBuf));
+                                curNode_temp = curNode_temp->next;
+                            }
+                        }else{
+                            spacePtr = strchr(recBuf,' ');
+                            if(spacePtr != NULL){
+                                cmd = strndup(recBuf,spacePtr-recBuf);
+                                param = strndup(spacePtr+1,strlen(recBuf) - (spacePtr-recBuf));
+                                free(cmd);
+                                free(param);
+                            }else{
+                                char *errorCmd = strdup(recBuf);
+                                clearBuf(recBuf,4096);
+                                sprintf(recBuf,"Error: %s.\n",errorCmd);
+                                write(cur->fd,recBuf,strlen(recBuf));
+                            }
+                        }
                     }
                     break;
                 }else{

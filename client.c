@@ -49,7 +49,6 @@ int main(int argc,char **argv){
         select(maxfdp,&rfds,NULL,NULL,NULL);
         if(FD_ISSET(0,&rfds)){
             recCount = read(0,recBuf,sizeof(recBuf));
-            printf("Received from stdin: ###%s###\n",recBuf);
             if(strcmp(recBuf,"exit\n") == 0){
                 break;
             }else{

@@ -91,14 +91,15 @@ void test_CheckUserNameValid(void){
     AddUserToList(rootNode,user3);
 
     assert(CheckUserNameValid(rootNode,"user4") == 1);
-    assert(CheckUserNameValid(rootNode,"x") == 0);
-    assert(CheckUserNameValid(rootNode,"1234567890123") == 0);
-    assert(CheckUserNameValid(rootNode,"anonymous") == 0);
-    assert(CheckUserNameValid(rootNode,"user2") == 0);
+    assert(CheckUserNameValid(rootNode,"x") == -1);
+    assert(CheckUserNameValid(rootNode,"1234567890123") == -1);
+    assert(CheckUserNameValid(rootNode,"anonymous") == -2);
+    assert(CheckUserNameValid(rootNode,"user2") == -3);
 }
 
 void test_ChangeUserName(void){
     int i;
+    char *outputMsg[2];
     user_t *rootNode=NULL,*cur=NULL;
     user_t *userArr[4];
     userArr[0] = NewUser(3,"192.168.0.1",3000,"anonymous");
@@ -111,12 +112,12 @@ void test_ChangeUserName(void){
         AddUserToList(rootNode,userArr[i]);
     }
 
-    assert(ChangeUserName(rootNode,userArr[0],"user1") == 1);
-    assert(ChangeUserName(rootNode,userArr[0],"user1") == 1);
-    assert(ChangeUserName(rootNode,userArr[1],"anonymous") == 0);
-    assert(ChangeUserName(rootNode,userArr[1],"user1") == 0);
-    assert(ChangeUserName(rootNode,userArr[1],"x") == 0);
-    assert(ChangeUserName(rootNode,userArr[1],"1234567890123") == 0);
+    assert(ChangeUserName(rootNode,userArr[0],"user1",outputMsg) == 1);
+    assert(ChangeUserName(rootNode,userArr[0],"user1",outputMsg) == 1);
+    assert(ChangeUserName(rootNode,userArr[1],"anonymous",outputMsg) == 0);
+    assert(ChangeUserName(rootNode,userArr[1],"user1",outputMsg) == 0);
+    assert(ChangeUserName(rootNode,userArr[1],"x",outputMsg) == 0);
+    assert(ChangeUserName(rootNode,userArr[1],"1234567890123",outputMsg) == 0);
 
     assert(strcmp(rootNode->name,"user1") == 0);
 }
@@ -127,5 +128,6 @@ int main(){
     test_AddUserToList();
     test_RemoveUserFromList();
     test_CheckUserNameValid();
+    test_ChangeUserName();
     return 0;
 }

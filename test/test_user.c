@@ -48,7 +48,7 @@ user_t* test_RemoveUserFromList(){
     userArr[0] = NewUser(3,"192.168.0.1",3000,"anonymous");
     userArr[1] = NewUser(4,"192.168.0.2",3000,"anonymous");
     userArr[2] = NewUser(5,"192.168.0.3",3000,"anonymous");
-    userArr[3] = NewUser(6,"192.168.0.3",3000,"user4");
+    userArr[3] = NewUser(6,"192.168.0.3",3000,"ForgetMyname");
 
     rootNode = userArr[0];
     for(i=1;i<3;i++){
@@ -83,18 +83,19 @@ user_t* test_RemoveUserFromList(){
 void test_CheckUserNameValid(void){
     user_t *rootNode=NULL;
     user_t *user1 = NewUser(3,"192.168.0.1",3000,"anonymous");
-    user_t *user2 = NewUser(4,"192.168.0.2",3000,"user2");
-    user_t *user3 = NewUser(5,"192.168.0.3",3000,"user3");
+    user_t *user2 = NewUser(4,"192.168.0.2",3000,"user");
+    user_t *user3 = NewUser(5,"192.168.0.3",3000,"ForgetMyname");
 
     rootNode = user1;
     AddUserToList(rootNode,user2);
     AddUserToList(rootNode,user3);
 
-    assert(CheckUserNameValid(rootNode,"user4") == 1);
+    assert(CheckUserNameValid(rootNode,"John") == 1);
     assert(CheckUserNameValid(rootNode,"x") == -1);
-    assert(CheckUserNameValid(rootNode,"1234567890123") == -1);
+    assert(CheckUserNameValid(rootNode,"DictionaryMan") == -1);
+    assert(CheckUserNameValid(rootNode,"123") == -1);
     assert(CheckUserNameValid(rootNode,"anonymous") == -2);
-    assert(CheckUserNameValid(rootNode,"user2") == -3);
+    assert(CheckUserNameValid(rootNode,"ForgetMyname") == -3);
 }
 
 void test_ChangeUserName(void){
@@ -105,21 +106,22 @@ void test_ChangeUserName(void){
     userArr[0] = NewUser(3,"192.168.0.1",3000,"anonymous");
     userArr[1] = NewUser(4,"192.168.0.2",3000,"anonymous");
     userArr[2] = NewUser(5,"192.168.0.3",3000,"anonymous");
-    userArr[3] = NewUser(6,"192.168.0.3",3000,"user4");
+    userArr[3] = NewUser(6,"192.168.0.3",3000,"Justine");
 
     rootNode = userArr[0];
     for(i=1;i<3;i++){
         AddUserToList(rootNode,userArr[i]);
     }
 
-    assert(ChangeUserName(rootNode,userArr[0],"user1",outputMsg) == 1);
-    assert(ChangeUserName(rootNode,userArr[0],"user1",outputMsg) == 1);
+    assert(ChangeUserName(rootNode,userArr[0],"Peter",outputMsg) == 1);
+    assert(ChangeUserName(rootNode,userArr[0],"Peter",outputMsg) == 1);
     assert(ChangeUserName(rootNode,userArr[1],"anonymous",outputMsg) == 0);
-    assert(ChangeUserName(rootNode,userArr[1],"user1",outputMsg) == 0);
+    assert(ChangeUserName(rootNode,userArr[1],"Peter",outputMsg) == 0);
     assert(ChangeUserName(rootNode,userArr[1],"x",outputMsg) == 0);
-    assert(ChangeUserName(rootNode,userArr[1],"1234567890123",outputMsg) == 0);
+    assert(ChangeUserName(rootNode,userArr[1],"DictionaryMan",outputMsg) == 0);
+    assert(ChangeUserName(rootNode,userArr[1],"123",outputMsg) == 0);
 
-    assert(strcmp(rootNode->name,"user1") == 0);
+    assert(strcmp(rootNode->name,"Peter") == 0);
 }
 
 int main(){

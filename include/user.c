@@ -76,6 +76,13 @@ int CheckUserNameValid(user_t *root,char *name){
     int len = strlen(name);
     if(len < 2 || len > 12){
         return -1;
+    }else{
+        int i,len=strlen(name);
+        for(i=0;i<len;i++){
+            if(!(name[i] >= 'a' && name[i] <= 'z') && !(name[i] >= 'A' && name[i] <= 'Z')){
+                return -1;
+            }
+        }
     }
     if(strcmp(name,"anonymous") == 0){
         return -2;

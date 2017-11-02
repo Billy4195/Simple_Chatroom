@@ -6,7 +6,9 @@
 #include <unistd.h>
 #include <string.h>
 
-#define MAX(x,y) ((x)>(y))?(x):(y)
+int MAX(int x,int y){
+        return x > y ? x : y;
+}
 
 int main(int argc,char **argv){
     int clientFd;

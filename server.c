@@ -9,7 +9,7 @@
 #include "user.h"
 
 #define LISTENQ 10
-#define HELLO_TO_EXISTED "[Server] anonymous is coming!\n"
+#define HELLO_TO_EXISTED "[Server] Someone is coming!\n"
 #define HELLO_TO_NEW "[Server] Hello, anonymous! From: %s/%u\n"
 
 int MAX(int x,int y){

@@ -122,6 +122,21 @@ int main(){
                             if(spacePtr != NULL){
                                 cmd = strndup(recBuf,spacePtr-recBuf);
                                 param = strndup(spacePtr+1,strlen(recBuf) - (spacePtr-recBuf));
+                                if(strcmp(cmd,"name") == 0){
+                                    char *outputMsg[2];
+                                    outputMsg[0] = NULL;
+                                    outputMsg[1] = NULL;
+                                    if(ChangeUserName(root,cur,param,outputMsg)){
+                                        user_t *curNode_temp=root;
+                                        while(curNode_temp != NULL){
+                                            if(!UserEqual(curNode_temp,cur)){
+                                                write(curNode_temp->fd,outputMsg[1],strlen(outputMsg[1]));
+                                            }
+                                            curNode_temp = curNode_temp->next;
+                                        }
+                                    }
+                                    write(cur->fd,outputMsg[0],strlen(outputMsg[0]));
+                                }
                                 free(cmd);
                                 free(param);
                             }else{

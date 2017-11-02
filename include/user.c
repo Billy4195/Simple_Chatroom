@@ -75,28 +75,47 @@ int CheckUserNameValid(user_t *root,char *name){
     user_t *cur=root;
     int len = strlen(name);
     if(len < 2 || len > 12){
-        return 0;
+        return -1;
     }
     if(strcmp(name,"anonymous") == 0){
-        return 0;
+        return -2;
     }
     while(cur != NULL){
         if(strcmp(cur->name,name) == 0){
-            return 0;
+            return -3;
         }
         cur = cur->next;
     }
     return 1;
 }
 
-int ChangeUserName(user_t *root,user_t *user,char *newName){
-    if(strcmp(user->name,newName) == 0){
+int ChangeUserName(user_t *root,user_t *user,char *newName,char **outputMsg){
+    int ret;
+    char buf[80];
+    if(!(strcmp(newName,"anonymous") == 0) && (strcmp(user->name,newName) == 0)){
         return 1;
     }
-    if(CheckUserNameValid(root,newName)){
+    ;
+    if((ret=CheckUserNameValid(root,newName)) == 1){
+        sprintf(buf,"[Server] You're now known as %s.\n",newName);
+        *outputMsg = strdup(buf);
+        sprintf(buf,"[Server] %s is now known as %s.\n",user->name,newName);
+        *(outputMsg+1) = strdup(buf);
         strcpy(user->name,newName);
         return 1;
     }else{
+        switch(ret){
+            case -1:
+                *outputMsg = strdup("[Server] ERROR: Username can only consists of 2~12 English letters.\n");
+                break;
+            case -2:
+                *outputMsg = strdup("[Server] ERROR: Username cannot be anonymous.\n");
+                break;
+            case -3:
+                sprintf(buf,"[Server] ERROR: %s has been used by others.\n",newName);
+                *outputMsg = strdup(buf);
+                break;
+        }
         return 0;
     }
 }

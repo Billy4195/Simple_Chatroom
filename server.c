@@ -28,6 +28,74 @@ void clearBuf(char *buffer,int len){
     memset(buffer,0,len);
 }
 
+int send_private_message(user_t *root,user_t *sender,char *param){
+    char *spacePtr;
+    char *receiverName,*msg;
+    char *outputMsg[2];
+    char buf[4200];
+    int i,success;
+    user_t *cur,*receiver;
+
+    success = 0;
+    spacePtr = strchr(param,' ');
+    for(i=0;i<2;i++){
+        outputMsg[i] = NULL;
+    }
+    if(spacePtr == NULL){
+        receiverName = strdup(param);
+        msg = strdup(" ");
+    }else{
+        receiverName = strndup(param,spacePtr-param);
+        msg = strndup(spacePtr+1,strlen(param) - (spacePtr-param));
+    }
+
+    if(strcmp(sender->name,"anonymous") == 0){
+        *outputMsg = strdup("[Server] ERROR: You are anonymous.\n");
+    }else{
+        cur = root;
+        //Find receiver
+        receiver = NULL;
+        while(cur != NULL){
+            if(strcmp(cur->name,receiverName) == 0){
+                receiver = cur;
+                break;
+            }
+            cur = cur->next;
+        }
+        if(strcmp(receiver->name,"anonymous") == 0){
+            *outputMsg = strdup("[Server] ERROR: The client to which you sent is anonymous.\n");
+        }else if(receiver == NULL){
+            *outputMsg = strdup("[Server] ERROR: The receiver doesn't exist.\n");
+        }else{
+            success = 1;
+            *outputMsg = strdup("[Server] SUCCESS: Your message has been sent.\n");
+            sprintf(buf,"[Server] %s tell you %s\n",sender->name,msg);
+            *(outputMsg+1) = strdup(buf);
+            write(receiver->fd,outputMsg[1],strlen(outputMsg[1]));
+        }
+    }
+    write(sender->fd,outputMsg[0],strlen(outputMsg[0]));
+    for(i=0;i<2;i++){
+        if(outputMsg[i] != NULL){
+            free(outputMsg[i]);
+        }
+    }
+    free(receiverName);
+    free(msg);
+    return success;
+}
+
+void broadcast_message(user_t *root,user_t *sender,char *msg){
+    char buf[4200];
+    user_t *cur;
+    sprintf(buf,"[Server] %s yell %s\n",sender->name,msg);
+    cur = root;
+    while(cur != NULL){
+        write(cur->fd,buf,strlen(buf));
+        cur = cur->next;
+    }
+}
+
 int main(){
     int listenFd;
     struct sockaddr_in serverAddr;
@@ -136,6 +204,18 @@ int main(){
                                         }
                                     }
                                     write(cur->fd,outputMsg[0],strlen(outputMsg[0]));
+                                    {
+                                        int i;
+                                        for(i=0;i<2;i++){
+                                            if(outputMsg[i] != NULL){
+                                                free(outputMsg[i]);
+                                            }
+                                        }
+                                    }
+                                }else if(strcmp(cmd,"tell") == 0){
+                                    send_private_message(root,cur,param);
+                                }else if(strcmp(cmd,"yell") == 0){
+                                    broadcast_message(root,cur,param);
                                 }
                                 free(cmd);
                                 free(param);

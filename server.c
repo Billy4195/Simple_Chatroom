@@ -107,6 +107,7 @@ int main(){
     fd_set rfds;
     char recBuf[4096];
     size_t recLen=4096;
+    const size_t bufferSize=4096;
     int maxfdp=0;
 
     FD_ZERO(&rfds);
@@ -157,7 +158,7 @@ int main(){
             cur = root;
             while(cur != NULL){
                 if(FD_ISSET(cur->fd,&rfds)){
-                    if((recLen = read(cur->fd,recBuf,recLen)) == 0){
+                    if((recLen = read(cur->fd,recBuf,bufferSize)) == 0){
                         user_t *temp = cur;
                         sprintf(recBuf,"[Server] %s is offline.\n",cur->name);
                         close(cur->fd);
@@ -216,13 +217,16 @@ int main(){
                                     send_private_message(root,cur,param);
                                 }else if(strcmp(cmd,"yell") == 0){
                                     broadcast_message(root,cur,param);
+                                }else{
+                                    clearBuf(recBuf,4096);
+                                    strcpy(recBuf,"[Server] ERROR: Error command.\n");
+                                    write(cur->fd,recBuf,strlen(recBuf));
                                 }
                                 free(cmd);
                                 free(param);
                             }else{
-                                char *errorCmd = strdup(recBuf);
                                 clearBuf(recBuf,4096);
-                                sprintf(recBuf,"Error: %s.\n",errorCmd);
+                                strcpy(recBuf,"[Server] ERROR: Error command.\n");
                                 write(cur->fd,recBuf,strlen(recBuf));
                             }
                         }

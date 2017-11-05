@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/socket.h>
 #include <string.h>
 
 int MAX(int x,int y){

@@ -104,7 +104,7 @@ int main(){
     user_t *root=NULL,*newUser,*cur=NULL;
     int connfd;
     struct sockaddr_in clientAddr;
-    fd_set rfds;
+    fd_set rfds,allset;
     char recBuf[4096];
     size_t recLen=4096;
     const size_t bufferSize=4096;
@@ -128,11 +128,12 @@ int main(){
     }
 
     listen(listenFd,LISTENQ);
+    maxfdp = listenFd;
+    FD_ZERO(&allset);
+    FD_SET(listenFd,&allset);
 
     while(1){
-        FD_SET(listenFd,&rfds);
-        maxfdp = MAX(maxfdp,listenFd);
-        set_fdset(root,&rfds,&maxfdp);
+        rfds = allset;
         select(maxfdp+1,&rfds,NULL,NULL,NULL);
         clearBuf(recBuf,4096);
         if(FD_ISSET(listenFd,&rfds)){
@@ -140,6 +141,8 @@ int main(){
             if( (connfd = accept(listenFd,(struct sockaddr*)NULL,NULL)) != -1 ){
                 if(getpeername(connfd,(struct sockaddr*)&clientAddr,&clientAddrLen) == 0){
                     newUser = NewUser(connfd,inet_ntoa(clientAddr.sin_addr),ntohs(clientAddr.sin_port),"anonymous");
+                    FD_SET(connfd,&allset);
+                    if(connfd > maxfdp) maxfdp = connfd;
                     if(newUser != NULL){
                         sprintf(helloMsg,HELLO_TO_NEW,newUser->addr,newUser->port);
                         cur = root;
@@ -161,6 +164,7 @@ int main(){
                     if((recLen = read(cur->fd,recBuf,bufferSize)) == 0){
                         user_t *temp = cur;
                         sprintf(recBuf,"[Server] %s is offline.\n",cur->name);
+                        FD_CLR(cur->fd,&allset);
                         close(cur->fd);
                         root = RemoveUserFromList(root,cur);
                         {// notify online user someone is offline

@@ -53,7 +53,7 @@ int main(int argc,char **argv){
             if(strcmp(recBuf,"exit\n") == 0){
                 break;
             }else{
-                write(clientFd,recBuf,sizeof(recBuf));
+                write(clientFd,recBuf,strlen(recBuf));
             }
         }else if(FD_ISSET(clientFd,&rfds)){
             recCount = read(clientFd,recBuf,sizeof(recBuf));

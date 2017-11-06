@@ -53,6 +53,9 @@ int main(int argc,char **argv){
             if(strcmp(recBuf,"exit\n") == 0){
                 break;
             }else{
+                if(strcmp(recBuf,"\n") == 0){
+                    continue;
+                }
                 write(clientFd,recBuf,strlen(recBuf));
             }
         }else if(FD_ISSET(clientFd,&rfds)){

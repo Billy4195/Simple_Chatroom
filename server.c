@@ -181,6 +181,9 @@ int main(){
                         if(recBuf[strlen(recBuf) -1 ] == '\r'){
                             recBuf[strlen(recBuf) -1] = '\0';
                         }
+                        if(strlen(recBuf) == 0){
+                            continue;
+                        }
                         printf("%s\n",recBuf);
                         if(strcmp(recBuf,"who") == 0){
                             user_t *curNode_temp=root;
